@@ -7,11 +7,10 @@ import Button from "./Components/Button";
 
 function App() {
   const [currencynames, setCurrencyNames] = useState([]);
-  const [baseCurrency, setBaseCurrency] = useState("USD");
+  const [baseCurrency, setBaseCurrency] = useState("EUR");
   const [currencyData, setCurrencyData] = useState({});
   const [amount, setAmount] = useState(0);
   const [targetCurrency, setTargetCurrency] = useState("EUR");
-  // const [finalamount, setFinalamount] = useState(0);
   const [conversionResult, setConversionResult] = useState(null);
   const [conversionsHistory, setConversionsHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -22,8 +21,10 @@ function App() {
       .get(`http://localhost:3000/api/currencies?base_currency=${baseCurrency}`)
       .then((response) => {
         const data = response.data.data;
+        console.log(response.data.data);
         setCurrencyNames(Object.keys(data)); // Set currency names for dropdown
         setCurrencyData(data); // Store currency rates
+        console.log(data[baseCurrency]);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -48,30 +49,28 @@ function App() {
     setConversionsHistory(savedConversions);
   }, []);
 
-  const handleConversion = () => {
-    setTimeout(() => {
-      const rate = currencyData[targetCurrency]; // Assuming this is the correct rate
-      const result = (amount * rate).toFixed(2);
+  const handleConversion = async () => {
+    setLoading(true); // Show the spinner immediately
+
+    try {
+      // Simulate a delay or API call
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Add delay for demonstration
+
+      // Perform the conversion logic here
+      const result = currencyData[targetCurrency] * amount;
       setConversionResult(result);
 
-      // Save conversion to localStorage
-      const newConversion = {
-        baseCurrency,
-        targetCurrency,
-        amount,
-        result,
-        timestamp: new Date(),
-      };
-      const updatedHistory = [...conversionsHistory, newConversion];
-      setConversionsHistory(updatedHistory);
-      localStorage.setItem(
-        "conversionsHistory",
-        JSON.stringify(updatedHistory)
-      );
-      setLoading(false);
-    }, 3000);
+      // Optionally save conversion to localStorage
+      const storedConversions =
+        JSON.parse(localStorage.getItem("conversions")) || [];
+      storedConversions.push({ baseCurrency, targetCurrency, amount, result });
+      localStorage.setItem("conversions", JSON.stringify(storedConversions));
+    } catch (error) {
+      console.error("Conversion error:", error);
+    } finally {
+      setLoading(false); // Hide the spinner
+    }
   };
-
   return (
     <>
       <div className="lg:absolute right-10 lg:w-[450px] lg:h-auto flex items-center bg-white ">
