@@ -57,8 +57,13 @@ function App() {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Add delay for demonstration
 
       // Perform the conversion logic here
-      const result = currencyData[targetCurrency] * amount;
-      setConversionResult(result);
+      if (currencyData[baseCurrency] && currencyData[targetCurrency]) {
+        const baseCurrencyRate = currencyData[baseCurrency];
+        const targetCurrencyRate = currencyData[targetCurrency];
+        const result = (amount * targetCurrencyRate) / baseCurrencyRate;
+        // setConvertedAmount(result);
+        setConversionResult(result);
+      }
 
       // Optionally save conversion to localStorage
       const storedConversions =
