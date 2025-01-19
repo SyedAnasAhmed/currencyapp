@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import axios from 'axios';
 import { BASE_URL, API_KEY } from '../config.js';
-export const getCurrencyData = () => __awaiter(void 0, void 0, void 0, function* () {
+export const getCurrencyData = (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (baseCurrency = "") {
     var _a, _b;
     try {
         const response = yield axios.get(`${BASE_URL}/latest`, {
+            params: { base_currency: baseCurrency },
             headers: {
                 'apikey': API_KEY,
             },
